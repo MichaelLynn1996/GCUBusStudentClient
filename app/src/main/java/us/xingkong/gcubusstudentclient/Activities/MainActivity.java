@@ -182,18 +182,15 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                     startActivity(intent);
                 } else if (id == R.id.exit) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                    dialog.setTitle(R.string.tips);
-                    dialog.setMessage(R.string.isExit);
-                    dialog.setCancelable(false);
-                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    Global.makeDialog(MainActivity.this, R.string.tips, R.string.exit, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCollector.finishAll();
                         }
-                    });
-                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    }, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
                         }
                     });
                     dialog.show();
