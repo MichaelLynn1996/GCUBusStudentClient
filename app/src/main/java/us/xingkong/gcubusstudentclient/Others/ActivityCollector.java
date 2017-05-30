@@ -11,19 +11,19 @@ import java.util.List;
 
 public class ActivityCollector {
 
-    public static List<Activity>activities = new ArrayList<>();
+    public static List<Activity> activities = new ArrayList<>();
 
-    public static void addActivity(Activity activity){
+    public static void addActivity(Activity activity) {
         activities.add(activity);
     }
 
-    public static void removeActivity(Activity activity){
+    public static void removeActivity(Activity activity) {
         activities.remove(activity);
     }
 
-    public static void finishAll(){
-        for(Activity activity : activities){
-            if(activity != null && !activity.isFinishing()){
+    public static void finishAll() {
+        for (Activity activity : activities) {
+            if (activity != null && !activity.isFinishing()) {
                 activity.finish();
                 android.os.Process.killProcess(android.os.Process.myPid());
             }

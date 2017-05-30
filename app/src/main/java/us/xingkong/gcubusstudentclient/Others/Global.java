@@ -15,39 +15,36 @@ import us.xingkong.gcubusstudentclient.R;
 
 public class Global {
 
-    public static String roundTo1(double num)
-    {
-        if(num == 0){
+    public static String roundTo1(double num) {
+        if (num == 0) {
             return "0";
         }
         DecimalFormat df = new DecimalFormat("#.0");
         return df.format(num);
     }
 
-    public static void makeDialog(Activity context,int title,int message, DialogInterface.OnClickListener onOK,DialogInterface.OnClickListener onCancel)
-    {
+    public static void makeDialog(Activity context, int title, int message, DialogInterface.OnClickListener onOK, DialogInterface.OnClickListener onCancel) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setTitle(title);
         dialog.setMessage(message);
         dialog.setCancelable(false);
-        if(onOK != null)
+        if (onOK != null)
             dialog.setPositiveButton(R.string.ok, onOK);
 
-       if(onCancel != null)
-           dialog.setNegativeButton(R.string.cancel, onCancel);
+        if (onCancel != null)
+            dialog.setNegativeButton(R.string.cancel, onCancel);
         dialog.show();
     }
 
-    public static void makeDialog(Activity context,String title,String message, DialogInterface.OnClickListener onOK,DialogInterface.OnClickListener onCancel)
-    {
+    public static void makeDialog(Activity context, String title, String message, DialogInterface.OnClickListener onOK, DialogInterface.OnClickListener onCancel) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setTitle(title);
         dialog.setMessage(message);
         dialog.setCancelable(false);
-        if(onOK != null)
+        if (onOK != null)
             dialog.setPositiveButton(R.string.ok, onOK);
 
-        if(onCancel != null)
+        if (onCancel != null)
             dialog.setNegativeButton(R.string.cancel, onCancel);
         dialog.show();
     }

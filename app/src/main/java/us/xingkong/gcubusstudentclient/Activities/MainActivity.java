@@ -61,7 +61,7 @@ import us.xingkong.gcubusstudentclient.gbn.Point;
  * Created by SeaLynn0 on 2017/4/24.
  */
 
-public class MainActivity extends AppCompatActivity implements  AMapLocationListener {
+public class MainActivity extends AppCompatActivity implements AMapLocationListener {
 
     private DrawerLayout mDrawerLayout;
     Toolbar toolbar;
@@ -94,24 +94,23 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
             } else if (msg.what == 1) {
                 Marker marker = aMap.addMarker(new MarkerOptions());
 
-                array_cal.put((int)msg.obj,new Caculator(me));
+                array_cal.put((int) msg.obj, new Caculator(me));
 
-                array.put((int)msg.obj, marker);
+                array.put((int) msg.obj, marker);
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buslocation));
                 isAdd = true;
-            }else if(msg.what == 2)
-            {
+            } else if (msg.what == 2) {
                 double[] data = (double[]) msg.obj;
 
                 int id = (int) data[0];
                 Caculator cal = array_cal.get(id);
                 Marker mark = array.get(id);
                 mark.setPosition(new LatLng(data[1], data[2]));
-                cal.addPoint(data[1],data[2]);
+                cal.addPoint(data[1], data[2]);
                 mark.setTitle(id + "号车");
                 mark.setSnippet("距离：" + Global.roundTo1(cal.getDistance()) + "米\n速度：" + Global.roundTo1(cal.getSpeed()) + "m/s\n剩余时间：" + Global.roundTo1(cal.getTime()) + "秒");
-            }else if(msg.what == 3){
-                int id = (int)msg.obj;
+            } else if (msg.what == 3) {
+                int id = (int) msg.obj;
                 Marker mark = array.get(id);
                 mark.remove();
                 isDel = true;
@@ -143,8 +142,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
         }
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        if(navView.getHeaderCount() > 0)
-        {
+        if (navView.getHeaderCount() > 0) {
             TextView name = (TextView) navView.getHeaderView(0).findViewById(R.id.textView);
             name.setText(LoginActivity.name);
             name.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            intent.putExtra("isLogout",true);
+                            intent.putExtra("isLogout", true);
                             Toast.makeText(MainActivity.this, "注销成功！", Toast.LENGTH_SHORT).show();
                             startActivity(intent);
                             finish();
@@ -162,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                     }, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            
+
                         }
                     });
                 }
@@ -227,9 +225,8 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
         updateDriverIDs();
     }
 
-    private void dingwei()
-    {
-        aMap.animateCamera( CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000,113.1728190000),16,30,0)));
+    private void dingwei() {
+        aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000, 113.1728190000), 16, 30, 0)));
     }
 
     private void updateDriverIDs() {
@@ -245,11 +242,10 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
 
                     @Override
                     public void done(Object data, NetException e) {
-                        if(e != null)
-                        {
+                        if (e != null) {
                             ids = null;
                             System.out.println(e.toString());
-                        }else{
+                        } else {
                             try {
                                 ids = Net.getIDs(data.toString());
                                 try {
@@ -298,8 +294,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                 msg.what = 1;
                 msg.obj = id;
                 handler.sendMessage(msg);
-                while(!isAdd)
-                {
+                while (!isAdd) {
                     Thread.sleep(10);
                 }
 
@@ -308,16 +303,15 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
             net.GetPoint(id, new NetListener() {
                 @Override
                 public void done(Object data, NetException e) {
-                    if(e != null)
-                    {
+                    if (e != null) {
                         System.out.println(e.toString());
-                    }else{
+                    } else {
 
                         try {
                             Point point = new Point(data.toString());
-                            double[] dt = new double[]{ (double)id,point.getLatitude(),point.getLongitude()};
+                            double[] dt = new double[]{(double) id, point.getLatitude(), point.getLongitude()};
                             Message msg = new Message();
-                            msg .what = 2;
+                            msg.what = 2;
                             msg.obj = dt;
                             handler.sendMessage(msg);
                         } catch (JSONException e1) {
@@ -326,8 +320,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                             msg.obj = id;
                             isDel = false;
                             handler.sendMessage(msg);
-                            while(!isDel)
-                            {
+                            while (!isDel) {
                                 try {
                                     Thread.sleep(10);
                                 } catch (InterruptedException e2) {
@@ -342,8 +335,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                 }
             });
 
-            while(!isFinish)
-            {
+            while (!isFinish) {
                 Thread.sleep(30);
             }
         }
@@ -365,8 +357,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
                 msg.obj = array.keyAt(i);
                 isDel = false;
                 handler.sendMessage(msg);
-                while(!isDel)
-                {
+                while (!isDel) {
                     Thread.sleep(10);
                 }
                 int id = array.keyAt(i);
@@ -448,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements  AMapLocationList
 
         if (amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
-                me.setPosition(new LatLng(amapLocation.getLatitude(),amapLocation.getLongitude()));
+                me.setPosition(new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude()));
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);

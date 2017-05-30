@@ -18,67 +18,62 @@ public class Caculator {
     ArrayList<Point> plist;
     Marker user;
 
-    public Caculator(Marker marker)
-    {
+    public Caculator(Marker marker) {
         plist = new ArrayList<Point>();
         user = marker;
     }
 
-    public void addPoint(double longitude,double latitude){
+    public void addPoint(double longitude, double latitude) {
 
-        plist.add(new Point(longitude,latitude));
-        if(plist.size()>maxpoint){
+        plist.add(new Point(longitude, latitude));
+        if (plist.size() > maxpoint) {
             plist.remove(0);
         }
     }
 
-    public double getDistance(){
-        if(plist.size() <= 0)
+    public double getDistance() {
+        if (plist.size() <= 0)
             return 0;
         System.out.println("+++++" + user.getPosition() + "+++++++++++ " + plist.get(plist.size() - 1).getLatLng());
-        return AMapUtils.calculateLineDistance(user.getPosition(),plist.get(plist.size() - 1).getLatLng());
+        return AMapUtils.calculateLineDistance(user.getPosition(), plist.get(plist.size() - 1).getLatLng());
     }
 
-    public double getSpeed(){
-        if(plist.size() <= 1)
+    public double getSpeed() {
+        if (plist.size() <= 1)
             return 0;
-        Point p1 = plist.get(plist.size() - 2),p2 = plist.get(plist.size() - 1);
+        Point p1 = plist.get(plist.size() - 2), p2 = plist.get(plist.size() - 1);
 
-        double distance =  AMapUtils.calculateLineDistance(p1.getLatLng(),p2.getLatLng());
-        double dt = -(p1.getDate().getTime() - p2.getDate().getTime())/1000;
+        double distance = AMapUtils.calculateLineDistance(p1.getLatLng(), p2.getLatLng());
+        double dt = -(p1.getDate().getTime() - p2.getDate().getTime()) / 1000;
 
-        return distance/dt;
+        return distance / dt;
     }
 
-    public double getTime()
-    {
+    public double getTime() {
         double distance = getDistance();
         double speed = getSpeed();
-        if(distance == 0 || speed == 0)
-        {
+        if (distance == 0 || speed == 0) {
             return 0;
         }
-        return  distance / speed;
+        return distance / speed;
     }
 
-    class Point{
+    class Point {
         private double longitude;
         private double latitude;
         private Date date;
 
-        Point(double longitude,double latitude){
+        Point(double longitude, double latitude) {
             this.longitude = longitude;
             this.latitude = latitude;
             date = new Date();
         }
 
-        public LatLng getLatLng()
-        {
-            return new LatLng(longitude,latitude);
+        public LatLng getLatLng() {
+            return new LatLng(longitude, latitude);
         }
 
-        public Date getDate()
-        {
+        public Date getDate() {
             return date;
         }
     }

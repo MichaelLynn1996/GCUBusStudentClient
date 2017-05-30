@@ -54,32 +54,29 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences pref;
     SharedPreferences.Editor editor;
 
-    Handler handler = new Handler()
-    {
+    Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == 1)
-            {
-                if(yzm != null)
-                {
-                    yzm.setImageBitmap((Bitmap)msg.obj);
-                }else{
-                    Toast.makeText(LoginActivity.this,"获取验证码失败！",Toast.LENGTH_SHORT).show();
+            if (msg.what == 1) {
+                if (yzm != null) {
+                    yzm.setImageBitmap((Bitmap) msg.obj);
+                } else {
+                    Toast.makeText(LoginActivity.this, "获取验证码失败！", Toast.LENGTH_SHORT).show();
                 }
-            }else if(msg.what == 2){
+            } else if (msg.what == 2) {
                 editor = pref.edit();
                 editor.putString("username", String.valueOf(et_username.getText()));
                 editor.putString("password", String.valueOf(et_password.getText()));
                 editor.putString("name", name);
-                editor.putBoolean("autoLogin",true);
+                editor.putBoolean("autoLogin", true);
                 editor.apply();
-                Toast.makeText(LoginActivity.this,name + "同学登陆成功！",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                Toast.makeText(LoginActivity.this, name + "同学登陆成功！", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-            }else if(msg.what == 3){
-                Toast.makeText(LoginActivity.this,"登陆失败！",Toast.LENGTH_SHORT).show();
+            } else if (msg.what == 3) {
+                Toast.makeText(LoginActivity.this, "登陆失败！", Toast.LENGTH_SHORT).show();
                 getYZM();
             }
             setEnable(true);
@@ -89,27 +86,27 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN , WindowManager.LayoutParams. FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         ActivityCollector.addActivity(this);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isAutoLogin = pref.getBoolean("autoLogin", false);
         Intent intent = getIntent();
-        if(intent.getBooleanExtra("isLogout",false)){
+        if (intent.getBooleanExtra("isLogout", false)) {
             isAutoLogin = false;
             editor = pref.edit();
             editor.putBoolean("autoLogin", false);
             editor.apply();
         }
-        if(isAutoLogin){
-            name = pref.getString("name",null);
+        if (isAutoLogin) {
+            name = pref.getString("name", null);
             intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
 
-        yzm = (ImageView)findViewById(R.id.yzm);
+        yzm = (ImageView) findViewById(R.id.yzm);
         yzm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,11 +114,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        et_username = (EditText)findViewById(R.id.et_username);
-        et_password = (EditText)findViewById(R.id.et_password);
-        et_yzm = (EditText)findViewById(R.id.et_yzm);
+        et_username = (EditText) findViewById(R.id.et_username);
+        et_password = (EditText) findViewById(R.id.et_password);
+        et_yzm = (EditText) findViewById(R.id.et_yzm);
 
-        login = (Button)findViewById(R.id.bt_login);
+        login = (Button) findViewById(R.id.bt_login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,53 +131,48 @@ public class LoginActivity extends AppCompatActivity {
         getYZM();
     }
 
-    private void getYZM()
-    {
+    private void getYZM() {
         Cookie = "";
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
 
-                Bitmap get =  getYZMHTTP();
-                if(get != null)
-                {
+                Bitmap get = getYZMHTTP();
+                if (get != null) {
                     Message msg = new Message();
                     msg.what = 1;
                     msg.obj = get;
                     handler.sendMessage(msg);
-                }else{
+                } else {
                     System.out.println("FAIL");
                 }
             }
         }.start();
     }
 
-    private  void setEnable(boolean en)
-    {
+    private void setEnable(boolean en) {
         et_password.setEnabled(en);
         et_username.setEnabled(en);
         et_yzm.setEnabled(en);
         login.setEnabled(en);
     }
 
-    private void Login()
-    {
+    private void Login() {
         setEnable(false);
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
                     //System.out.println("http://www.xingkong.us/home/index.php/Home/index/login?xh=" + et_username.getText() + "&pw=" + et_password.getText() + "&code=" + et_yzm.getText());
 
-                    JSONObject obj =  connect("http://www.xingkong.us/home/index.php/Home/index/login?xh=" + et_username.getText() + "&pw=" + et_password.getText() + "&code=" + et_yzm.getText());
+                    JSONObject obj = connect("http://www.xingkong.us/home/index.php/Home/index/login?xh=" + et_username.getText() + "&pw=" + et_password.getText() + "&code=" + et_yzm.getText());
 
                     int Status = Integer.valueOf(obj.get("Status").toString());
 
 
-                    if(Status != 200)
-                    {
+                    if (Status != 200) {
                         handler.sendEmptyMessage(3);
-                    }else{
+                    } else {
                         name = obj.getString("xm");
                         handler.sendEmptyMessage(2);
                     }
@@ -193,26 +185,23 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
-    private Bitmap getYZMHTTP()
-    {
+    private Bitmap getYZMHTTP() {
         Bitmap result = null;
         try {
-            JSONObject obj =  connect("http://www.xingkong.us/home/index.php/Home/index/pre_login");
-            if(Integer.valueOf(obj.get("Status").toString()) == 200)
-            {
+            JSONObject obj = connect("http://www.xingkong.us/home/index.php/Home/index/pre_login");
+            if (Integer.valueOf(obj.get("Status").toString()) == 200) {
                 String url = obj.getString("url");
                 URL u = new URL(url);
 
                 HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-                conn.setRequestProperty("Cookie",Cookie);
+                conn.setRequestProperty("Cookie", Cookie);
                 Cookie += (getCookie(conn));
 
                 InputStream in = conn.getInputStream();
 
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 int b;
-                while((b = in.read()) != -1)
-                {
+                while ((b = in.read()) != -1) {
                     buffer.write(b);
                 }
 
@@ -220,7 +209,7 @@ public class LoginActivity extends AppCompatActivity {
                 byte[] data = buffer.toByteArray();
 
 
-                result = BitmapFactory.decodeByteArray(data,0,data.length);
+                result = BitmapFactory.decodeByteArray(data, 0, data.length);
 
                 conn.getInputStream().close();
 
@@ -239,21 +228,20 @@ public class LoginActivity extends AppCompatActivity {
 
         URL u = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-        conn.setRequestProperty("Cookie",Cookie);
+        conn.setRequestProperty("Cookie", Cookie);
         Cookie += (getCookie(conn));
-        InputStream in =  conn.getInputStream();
+        InputStream in = conn.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder buffer = new StringBuilder();
         int b;
-        while((b = reader.read()) != -1)
-        {
-            buffer.append((char)b);
+        while ((b = reader.read()) != -1) {
+            buffer.append((char) b);
         }
         String tmp = buffer.toString();
 
 
-        tmp = tmp.replaceFirst("jsonpReturn\\(","");
-        tmp = tmp.substring(0,tmp.lastIndexOf(");"));
+        tmp = tmp.replaceFirst("jsonpReturn\\(", "");
+        tmp = tmp.substring(0, tmp.lastIndexOf(");"));
         result = new JSONObject(tmp);
 
         in.close();
@@ -266,10 +254,9 @@ public class LoginActivity extends AppCompatActivity {
         ActivityCollector.removeActivity(this);
     }
 
-    private String getCookie(HttpURLConnection conn)
-    {
+    private String getCookie(HttpURLConnection conn) {
         String cookie = conn.getHeaderField("Set-Cookie");
-        if(cookie != null)
+        if (cookie != null)
             return cookie;
         else
             return "";

@@ -21,7 +21,7 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,7 +30,7 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
         ActionBar actionbar = getSupportActionBar();
-        if(actionbar != null) {
+        if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setTitle(R.string.about);
         }
