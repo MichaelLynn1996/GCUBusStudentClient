@@ -30,7 +30,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                 int id = item.getItemId();
                 if (id == R.id.map) {
                     mDrawerLayout.closeDrawers();
-                    dingwei();
+                    goToCampusCenter();
                 } else if (id == R.id.about) {
                     Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                     startActivity(intent);
@@ -220,12 +219,11 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             activate();
         }
 
-
-        dingwei();
+        goToCampusCenter();
         updateDriverIDs();
     }
 
-    private void dingwei() {
+    private void goToCampusCenter() {
         aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000, 113.1728190000), 16, 30, 0)));
     }
 
@@ -281,9 +279,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         isFinish = true;
         need2refresh = false;
 
-        for (int i = 0; i < ids.length; i++) {
-
-            final int id = ids[i];
+        for (final int id : ids) {
 
             Marker marker = array.get(id);
             if (marker == null) {
@@ -496,5 +492,12 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     protected void onStop() {
         super.onStop();
         mLocationClient.stopLocation();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        deactivate();
+        activate();
     }
 }

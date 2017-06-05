@@ -6,7 +6,6 @@ import android.support.v7.app.AlertDialog;
 
 import java.text.DecimalFormat;
 
-import us.xingkong.gcubusstudentclient.Activities.MainActivity;
 import us.xingkong.gcubusstudentclient.R;
 
 /**
