@@ -6,17 +6,22 @@
             android:icon="@drawable/ic_map"
             android:title="@string/map">
         </item>
-        <item
-            android:id="@+id/about"
-            android:icon="@drawable/ic_about"
-            android:title="@string/about">
-        </item>
-        <item
-            android:id="@+id/exit"
-            android:icon="@drawable/ic_exit"
-            android:title="@string/exit">
-        </item>
 
     </group>
+
+    <item android:title="@string/exit_logoff">
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/ic_about"
+                android:title="@string/about">
+            </item>
+            <item
+                android:id="@+id/exit"
+                android:icon="@drawable/ic_exit"
+                android:title="@string/exit">
+            </item>
+        </menu>
+    </item>
 
 </menu>

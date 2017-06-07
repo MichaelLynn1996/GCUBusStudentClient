@@ -1,8 +1,11 @@
 <resources>
+    <!--  关于界面 -->
     <string name="app_name">星校巴</string>
-    <string name="pretend">假装这是登陆注册界面</string>
+    <string name="company">星空学生创新中心</string>
+    <string name="copyright">Copyright © 2008-2017 xingkong.us</string>
+    <string name="reserved">All rights reserved.</string>
+    <string name="introduce">功能介绍</string>
 
-    <string name="regist">注册</string>
     <string name="map">定位</string>
     <string name="about">关于</string>
     <string name="exit">退出</string>
@@ -26,10 +29,11 @@
     <string name="success_login">登陆成功</string>
     <string name="success_register">注册成功</string>
 
-    <string name="logoff">设置</string>
+    <string name="setting">设置</string>
+    <string name="exit_logoff">关于 &amp; 退出</string>
 
     <!--  错误信息 -->
-    <string name="wrong_unknow">未知错误</string>
+    <string name="wrong_unknown">未知错误</string>
     <string name="wrong_connection">连接发生错误，请检查网络连接</string>
 
 

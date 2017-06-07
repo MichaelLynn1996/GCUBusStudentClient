@@ -11,4 +11,7 @@
     <color name="blue2">#2080df</color>
     <color name="green1">#008B8B</color>
     <color name="black1">#222222</color>
+
+    <color name="purewhite">#FFFFFF</color>
+    <color name="red">#D32F2F</color>
 </resources>

@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                     Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                     startActivity(intent);
                 } else if (id == R.id.exit) {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                     Global.makeDialog(MainActivity.this, R.string.tips, R.string.exit, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
                         }
                     });
-                    dialog.show();
                 }
                 return true;
             }
