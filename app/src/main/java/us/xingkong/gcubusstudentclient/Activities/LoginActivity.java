@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     String Cookie = "";
     public static String name = null;
 
-    private SharedPreferences pref;
+    SharedPreferences pref;
     SharedPreferences.Editor editor;
 
     Handler handler = new Handler() {
@@ -66,10 +66,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } else if (msg.what == 2) {
                 editor = pref.edit();
-                editor.putString("username", String.valueOf(et_username.getText()));
-                editor.putString("password", String.valueOf(et_password.getText()));
+//                editor.putString("username", String.valueOf(et_username.getText()));
+//                editor.putString("password", String.valueOf(et_password.getText()));  //可能会用来验证密码是否更改
                 editor.putString("name", name);
                 editor.putBoolean("autoLogin", true);
+                editor.putBoolean("isNotActive", false);
                 editor.apply();
                 Toast.makeText(LoginActivity.this, name + "同学登陆成功！", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -90,18 +91,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ActivityCollector.addActivity(this);
 
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = this.getSharedPreferences("userData",MODE_PRIVATE);
         boolean isAutoLogin = pref.getBoolean("autoLogin", false);
-        Intent intent = getIntent();
-        if (intent.getBooleanExtra("isLogout", false)) {
-            isAutoLogin = false;
-            editor = pref.edit();
-            editor.putBoolean("autoLogin", false);
-            editor.apply();
-        }
         if (isAutoLogin) {
             name = pref.getString("name", null);
-            intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }

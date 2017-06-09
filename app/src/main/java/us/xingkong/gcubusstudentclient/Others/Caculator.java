@@ -13,14 +13,14 @@ import java.util.Date;
 
 public class Caculator {
 
-    final int maxpoint = 100;
+    private final int maxpoint = 100;
 
-    ArrayList<Point> plist;
-    Marker user;
+    private ArrayList<Point> plist;
+    private LatLng userLatLng;
 
-    public Caculator(Marker marker) {
-        plist = new ArrayList<Point>();
-        user = marker;
+    public Caculator(LatLng latlng) {
+        plist = new ArrayList<>();
+        userLatLng = latlng;
     }
 
     public void addPoint(double longitude, double latitude) {
@@ -34,8 +34,8 @@ public class Caculator {
     public double getDistance() {
         if (plist.size() <= 0)
             return 0;
-        System.out.println("+++++" + user.getPosition() + "+++++++++++ " + plist.get(plist.size() - 1).getLatLng());
-        return AMapUtils.calculateLineDistance(user.getPosition(), plist.get(plist.size() - 1).getLatLng());
+        System.out.println("+++++" + userLatLng + "+++++++++++ " + plist.get(plist.size() - 1).getLatLng());
+        return AMapUtils.calculateLineDistance(userLatLng, plist.get(plist.size() - 1).getLatLng());
     }
 
     public double getSpeed() {
@@ -58,7 +58,7 @@ public class Caculator {
         return distance / speed;
     }
 
-    class Point {
+    private class Point {
         private double longitude;
         private double latitude;
         private Date date;
@@ -69,11 +69,11 @@ public class Caculator {
             date = new Date();
         }
 
-        public LatLng getLatLng() {
+        LatLng getLatLng() {
             return new LatLng(longitude, latitude);
         }
 
-        public Date getDate() {
+        Date getDate() {
             return date;
         }
     }

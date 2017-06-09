@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -32,6 +32,30 @@
 
             </com.amap.api.maps.MapView>
         </LinearLayout>
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/margin"
+            fab:fab_addButtonColorNormal="@color/colorAccent">
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/locate_campus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_campus"
+                fab:fab_colorNormal="@color/purewhite"/>
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/locate_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_person"
+                fab:fab_colorNormal="@color/purewhite"/>
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
@@ -39,8 +63,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/nav_menu"
-        app:headerLayout="@layout/nav_header" />
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu" />
 
 
 </android.support.v4.widget.DrawerLayout>

@@ -3,10 +3,12 @@ package us.xingkong.gcubusstudentclient.Activities;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -14,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,17 +32,19 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
-import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import org.json.JSONException;
 
 import us.xingkong.gcubusstudentclient.Others.Caculator;
 import us.xingkong.gcubusstudentclient.Others.Global;
+import us.xingkong.gcubusstudentclient.R;
 import us.xingkong.gcubusstudentclient.gbn.Net;
 import us.xingkong.gcubusstudentclient.gbn.NetException;
 import us.xingkong.gcubusstudentclient.gbn.NetListener;
@@ -53,7 +56,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import us.xingkong.gcubusstudentclient.Others.ActivityCollector;
-import us.xingkong.gcubusstudentclient.R;
 import us.xingkong.gcubusstudentclient.gbn.Point;
 
 /**
@@ -68,22 +70,28 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     AMap aMap;
     Net net;
     int[] ids;
+    com.getbase.floatingactionbutton.FloatingActionButton fab_me;
+    com.getbase.floatingactionbutton.FloatingActionButton fab_campus;
+    FloatingActionsMenu fam;
 
     public AMapLocationClient mLocationClient = null;
     AMapLocationClientOption mLocationOption;
-    private UiSettings mUiSettings;//定义一个UiSettings对象
-    BitmapDescriptorFactory myBitmapDescriptorFactory;
+    MyLocationStyle myLocationStyle;
 
-    Marker me;
+    LatLng myLatLng;
 
     boolean isFinish;
     boolean isRunning = false;
     boolean need2refresh = false;
     boolean isAdd = false;
     boolean isDel = false;
+    boolean isNotActive;
 
     SparseArray<Marker> array = new SparseArray<>();
     SparseArray<Caculator> array_cal = new SparseArray<>();
+
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     Handler handler = new Handler() {
         @Override
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             } else if (msg.what == 1) {
                 Marker marker = aMap.addMarker(new MarkerOptions());
 
-                array_cal.put((int) msg.obj, new Caculator(me));
+                array_cal.put((int) msg.obj, new Caculator(myLatLng));
 
                 array.put((int) msg.obj, marker);
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buslocation));
@@ -114,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                 mark.remove();
                 isDel = true;
             }
-
         }
     };
 
@@ -125,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         ActivityCollector.addActivity(this);
 
         net = new Net(Net.SERVER_TEST);
+
+        pref = this.getSharedPreferences("userData",MODE_PRIVATE);
+        isNotActive = pref.getBoolean("isNotActive",false);
+
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
@@ -143,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         if (navView.getHeaderCount() > 0) {
             TextView name = (TextView) navView.getHeaderView(0).findViewById(R.id.textView);
-            name.setText(LoginActivity.name);
+            name.setText(LoginActivity.name + "    "+"▼");
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -151,7 +162,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            intent.putExtra("isLogout", true);
+                            editor = pref.edit();
+                            editor.putBoolean("autoLogin",false);
+                            editor.apply();
                             Toast.makeText(MainActivity.this, "注销成功！", Toast.LENGTH_SHORT).show();
                             startActivity(intent);
                             finish();
@@ -165,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                 }
             });
         }
-
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -189,11 +201,14 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
                         }
                     });
+                }else if (id == R.id.setting){
+                    Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
                 return true;
             }
         });
-
 
         initMap();
 
@@ -214,15 +229,45 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 1);
         } else {
-            activate();
+            if(!isNotActive){
+                activate();
+            }
         }
 
         goToCampusCenter();
         updateDriverIDs();
+
+        fab_me = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.locate_me);
+        fab_campus = (com.getbase.floatingactionbutton.FloatingActionButton)findViewById(R.id.locate_campus);
+        fam = (FloatingActionsMenu)findViewById(R.id.multiple_actions);
+        if(isNotActive){
+            fam.removeButton(fab_me);
+        }
+        fab_me.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fam.collapse();
+                goToMyPosition();
+            }
+        });
+        fab_campus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fam.collapse();
+                goToCampusCenter();
+            }
+        });
     }
 
     private void goToCampusCenter() {
         aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000, 113.1728190000), 16, 30, 0)));
+    }
+
+    private void goToMyPosition(){
+        //if (myLatLng!=null){
+            aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(myLatLng,18,30,0)));
+        //}
+
     }
 
     private void updateDriverIDs() {
@@ -337,8 +382,8 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         for (int i = 0; i < array.size(); i++) {
             boolean has = false;
-            for (int j = 0; j < ids.length; j++) {
-                if (array.keyAt(i) == ids[j]) {
+            for (int id1 : ids) {
+                if (array.keyAt(i) == id1) {
                     has = true;
                     break;
                 }
@@ -374,11 +419,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     private void initMap() {
         if (aMap == null) {
             aMap = mMapView.getMap();
-            me = aMap.addMarker(new MarkerOptions());
-            me.setIcon(BitmapDescriptorFactory.defaultMarker());
-            myBitmapDescriptorFactory = new BitmapDescriptorFactory();
-            mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
-            mUiSettings.setZoomControlsEnabled(true);
         }
     }
 
@@ -409,6 +449,15 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             // 在定位结束后，在合适的生命周期调用onDestroy()方法
             // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
             mLocationClient.startLocation();//启动定位
+
+            myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
+            //myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+            myLocationStyle.radiusFillColor(android.R.color.transparent);
+            myLocationStyle.strokeColor(android.R.color.transparent);
+            aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
+            //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
+            aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
         }
     }
 
@@ -433,14 +482,17 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         if (amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
-                me.setPosition(new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude()));
+                //System.out.println("Lat:"+ amapLocation.getLatitude() + "  Long:" + amapLocation.getLongitude());
+                double latitude = amapLocation.getLatitude();
+                double longitude = amapLocation.getLongitude();
+                myLatLng = new LatLng(latitude,longitude);
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
                 Toast.makeText(MainActivity.this, errText, Toast.LENGTH_LONG).show();
             }
         }
-        //System.out.println("Lat:"+ amapLocation.getLatitude() + "  Long:" + amapLocation.getLongitude());
+
     }
 
     @Override
@@ -489,13 +541,24 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     @Override
     protected void onStop() {
         super.onStop();
-        mLocationClient.stopLocation();
+        if(!isNotActive){
+            mLocationClient.stopLocation();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        deactivate();
-        activate();
+        if(!isNotActive){
+            mLocationClient.startLocation();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(!isNotActive){
+            mLocationClient.startLocation();
+        }
     }
 }

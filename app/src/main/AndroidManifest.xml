@@ -54,6 +54,10 @@
 
         </activity>
 
+        <activity android:name=".Activities.SettingActivity">
+
+        </activity>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="53ed0bcd0b9f9a8f9023f97fa7590798">

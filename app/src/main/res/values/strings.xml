@@ -2,8 +2,8 @@
     <!--  关于界面 -->
     <string name="app_name">星校巴</string>
     <string name="company">星空学生创新中心</string>
-    <string name="copyright">Copyright © 2008-2017 xingkong.us</string>
-    <string name="reserved">All rights reserved.</string>
+    <string name="copyright">2008–2017 xingkong.us</string>
+    <string name="reserved">Product.</string>
     <string name="introduce">功能介绍</string>
 
     <string name="map">定位</string>
@@ -18,9 +18,10 @@
 
     <string name="login">登陆</string>
     <string name="register">注册</string>
-    <string name="logout">退出登陆</string>
+    <string name="logout">注销登陆</string>
     <string name="send">发送</string>
     <string name="loading">加载中…</string>
+    <string name="not_locate_me">不定位自己</string>
 
     <string name="input_username">请输入学号</string>
     <string name="input_password">请输入密码</string>
@@ -47,4 +48,8 @@
     <string name="wrong_register_2">密码过短</string>
     <string name="wrong_register_3">用户名或密码不能为空</string>
     <string name="wrong_register_4">两次输入的密码不一样</string>
+
+    <string name="my_position">我的位置</string>
+    <string name="back_to_campus">回到学校</string>
+
 </resources>
