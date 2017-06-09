@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -482,10 +481,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         if (amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
-                //System.out.println("Lat:"+ amapLocation.getLatitude() + "  Long:" + amapLocation.getLongitude());
-                double latitude = amapLocation.getLatitude();
-                double longitude = amapLocation.getLongitude();
-                myLatLng = new LatLng(latitude, longitude);
+                myLatLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
