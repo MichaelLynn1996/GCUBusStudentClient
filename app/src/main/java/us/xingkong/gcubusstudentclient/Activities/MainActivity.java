@@ -133,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         net = new Net(Net.SERVER_TEST);
 
-        pref = this.getSharedPreferences("userData",MODE_PRIVATE);
-        isNotActive = pref.getBoolean("isNotActive",false);
+        pref = this.getSharedPreferences("userData", MODE_PRIVATE);
+        isNotActive = pref.getBoolean("isNotActive", false);
 
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         if (navView.getHeaderCount() > 0) {
             TextView name = (TextView) navView.getHeaderView(0).findViewById(R.id.textView);
-            name.setText(LoginActivity.name + "    "+"▼");
+            name.setText(LoginActivity.name + "    " + "▼");
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             editor = pref.edit();
-                            editor.putBoolean("autoLogin",false);
+                            editor.putBoolean("autoLogin", false);
                             editor.apply();
                             Toast.makeText(MainActivity.this, "注销成功！", Toast.LENGTH_SHORT).show();
                             startActivity(intent);
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
                         }
                     });
-                }else if (id == R.id.setting){
+                } else if (id == R.id.setting) {
                     Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                     startActivity(intent);
                     finish();
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 1);
         } else {
-            if(!isNotActive){
+            if (!isNotActive) {
                 activate();
             }
         }
@@ -238,9 +238,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         updateDriverIDs();
 
         fab_me = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.locate_me);
-        fab_campus = (com.getbase.floatingactionbutton.FloatingActionButton)findViewById(R.id.locate_campus);
-        fam = (FloatingActionsMenu)findViewById(R.id.multiple_actions);
-        if(isNotActive){
+        fab_campus = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.locate_campus);
+        fam = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        if (isNotActive) {
             fam.removeButton(fab_me);
         }
         fab_me.setOnClickListener(new View.OnClickListener() {
@@ -263,9 +263,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000, 113.1728190000), 16, 30, 0)));
     }
 
-    private void goToMyPosition(){
+    private void goToMyPosition() {
         //if (myLatLng!=null){
-            aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(myLatLng,18,30,0)));
+        aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(myLatLng, 18, 30, 0)));
         //}
 
     }
@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                 //System.out.println("Lat:"+ amapLocation.getLatitude() + "  Long:" + amapLocation.getLongitude());
                 double latitude = amapLocation.getLatitude();
                 double longitude = amapLocation.getLongitude();
-                myLatLng = new LatLng(latitude,longitude);
+                myLatLng = new LatLng(latitude, longitude);
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
@@ -541,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     @Override
     protected void onStop() {
         super.onStop();
-        if(!isNotActive){
+        if (!isNotActive) {
             mLocationClient.stopLocation();
         }
     }
@@ -549,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     @Override
     protected void onStart() {
         super.onStart();
-        if(!isNotActive){
+        if (!isNotActive) {
             mLocationClient.startLocation();
         }
     }
@@ -557,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     @Override
     protected void onRestart() {
         super.onRestart();
-        if(!isNotActive){
+        if (!isNotActive) {
             mLocationClient.startLocation();
         }
     }

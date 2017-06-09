@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ActivityCollector.addActivity(this);
 
-        pref = this.getSharedPreferences("userData",MODE_PRIVATE);
+        pref = this.getSharedPreferences("userData", MODE_PRIVATE);
         boolean isAutoLogin = pref.getBoolean("autoLogin", false);
         if (isAutoLogin) {
             name = pref.getString("name", null);
@@ -162,7 +162,6 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject obj = connect("http://www.xingkong.us/home/index.php/Home/index/login?xh=" + et_username.getText() + "&pw=" + et_password.getText() + "&code=" + et_yzm.getText());
 
                     int Status = Integer.valueOf(obj.get("Status").toString());
-
 
                     if (Status != 200) {
                         handler.sendEmptyMessage(3);

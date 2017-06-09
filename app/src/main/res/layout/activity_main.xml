@@ -46,14 +46,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_campus"
-                fab:fab_colorNormal="@color/purewhite"/>
+                fab:fab_colorNormal="@color/purewhite" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/locate_me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_person"
-                fab:fab_colorNormal="@color/purewhite"/>
+                fab:fab_colorNormal="@color/purewhite" />
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </android.support.design.widget.CoordinatorLayout>
