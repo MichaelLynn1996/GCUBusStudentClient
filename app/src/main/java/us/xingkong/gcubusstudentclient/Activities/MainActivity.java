@@ -227,10 +227,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 1);
-        } else {
-            if (!isNotActive) {
-                activate();
-            }
+        }
+        if (!isNotActive) {
+            activate();
         }
 
         goToCampusCenter();
@@ -545,9 +544,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     @Override
     protected void onStart() {
         super.onStart();
-        if (!isNotActive) {
-            mLocationClient.startLocation();
-        }
+//        if (!isNotActive) {
+//            mLocationClient.startLocation();
+//        }
     }
 
     @Override
