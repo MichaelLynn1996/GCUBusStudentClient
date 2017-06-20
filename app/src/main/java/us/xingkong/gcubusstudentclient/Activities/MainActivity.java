@@ -31,6 +31,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
@@ -74,6 +75,7 @@ public class MainActivity extends ToolbarBaseActivity implements AMapLocationLis
     MyLocationStyle myLocationStyle;
 
     LatLng myLatLng;
+    //LatLngBounds campusBounds = new LatLngBounds(new LatLng(23.427081,113.173019),new LatLng(23.438657,113.174349));
 
     boolean isFinish;
     boolean isRunning = false;
@@ -250,14 +252,11 @@ public class MainActivity extends ToolbarBaseActivity implements AMapLocationLis
     }
 
     private void goToCampusCenter() {
-        aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.4340300000, 113.1728190000), 16, 30, 0)));
+        aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(23.431827, 113.173008), 17, 30, 0)));//23.433141,113.174011 //23.4340300000, 113.1728190000
     }
 
     private void goToMyPosition() {
-        //if (myLatLng!=null){
         aMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(myLatLng, 18, 30, 0)));
-        //}
-
     }
 
     private void updateDriverIDs() {
@@ -409,6 +408,7 @@ public class MainActivity extends ToolbarBaseActivity implements AMapLocationLis
     private void initMap() {
         if (aMap == null) {
             aMap = mMapView.getMap();
+            //aMap.setMapStatusLimits(campusBounds);
         }
     }
 
