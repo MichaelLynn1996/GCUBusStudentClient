@@ -14,9 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
@@ -61,10 +58,9 @@ import us.xingkong.gcubusstudentclient.gbn.Point;
  * Created by SeaLynn0 on 2017/4/24.
  */
 
-public class MainActivity extends AppCompatActivity implements AMapLocationListener {
+public class MainActivity extends ToolbarBaseActivity implements AMapLocationListener {
 
     private DrawerLayout mDrawerLayout;
-    Toolbar toolbar;
     MapView mMapView = null;
     AMap aMap;
     Net net;
@@ -95,9 +91,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 0) {
-                //aMap.invalidate();
-            } else if (msg.what == 1) {
+            if (msg.what == 1) {
                 Marker marker = aMap.addMarker(new MarkerOptions());
 
                 array_cal.put((int) msg.obj, new Caculator(myLatLng));
@@ -125,11 +119,12 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ActivityCollector.addActivity(this);
+    protected int getContentView() {
+        return R.layout.activity_main;
+    }
 
+    @Override
+    protected void init(Bundle savedInstanceState) {
         net = new Net(Net.SERVER_TEST);
 
         pref = this.getSharedPreferences("userData", MODE_PRIVATE);
@@ -142,9 +137,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -157,14 +149,14 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Global.makeDialog(MainActivity.this, "提示", "是否注销登陆？", new DialogInterface.OnClickListener() {
+                    Global.makeDialog(MainActivity.this, R.string.tips, R.string.isLogout, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             editor = pref.edit();
                             editor.putBoolean("autoLogin", false);
                             editor.apply();
-                            Toast.makeText(MainActivity.this, "注销成功！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.success_register, Toast.LENGTH_SHORT).show();
                             startActivity(intent);
                             finish();
                         }
@@ -420,6 +412,17 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         }
     }
 
+    void initMyLocationStyle() {
+        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
+        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        myLocationStyle.radiusFillColor(android.R.color.transparent);
+        myLocationStyle.strokeColor(android.R.color.transparent);
+        aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
+        //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
+        aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
+    }
+
     /**
      * 激活定位
      */
@@ -448,14 +451,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
             mLocationClient.startLocation();//启动定位
 
-            myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-            //myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-            myLocationStyle.radiusFillColor(android.R.color.transparent);
-            myLocationStyle.strokeColor(android.R.color.transparent);
-            aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
-            //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
-            aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
+            initMyLocationStyle();
         }
     }
 
@@ -517,6 +513,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         super.onResume();
         //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
         mMapView.onResume();
+        if (!isNotActive) {
+            mLocationClient.startLocation();
+        }
     }
 
     @Override
@@ -524,6 +523,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+        if (!isNotActive) {
+            mLocationClient.stopLocation();
+        }
     }
 
     @Override
@@ -533,27 +535,4 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         mMapView.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (!isNotActive) {
-            mLocationClient.stopLocation();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        if (!isNotActive) {
-//            mLocationClient.startLocation();
-//        }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        if (!isNotActive) {
-            mLocationClient.startLocation();
-        }
-    }
 }

@@ -4,17 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import us.xingkong.gcubusstudentclient.Others.ActivityCollector;
 import us.xingkong.gcubusstudentclient.Others.Global;
 import us.xingkong.gcubusstudentclient.R;
 
@@ -22,9 +17,7 @@ import us.xingkong.gcubusstudentclient.R;
  * Created by SeaLynn0 on 2017/6/8.
  */
 
-public class SettingActivity extends AppCompatActivity {
-
-    Toolbar toolbar;
+public class SettingActivity extends ToolbarBaseActivity {
     TextView logout;
     Switch sw_locate;
 
@@ -32,15 +25,14 @@ public class SettingActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        ActivityCollector.addActivity(this);
+    protected int getContentView() {
+        return R.layout.activity_setting;
+    }
 
+    @Override
+    protected void init(Bundle savedInstanceState) {
         pref = this.getSharedPreferences("userData", MODE_PRIVATE);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +41,7 @@ public class SettingActivity extends AppCompatActivity {
                 SettingActivity.this.finish();
             }
         });
-        ActionBar actionbar = getSupportActionBar();
+
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setTitle(R.string.setting);
@@ -81,14 +73,14 @@ public class SettingActivity extends AppCompatActivity {
                 logout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Global.makeDialog(SettingActivity.this, "提示", "是否注销登陆？", new DialogInterface.OnClickListener() {
+                        Global.makeDialog(SettingActivity.this, R.string.tips, R.string.isLogout, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
                                 editor = pref.edit();
                                 editor.putBoolean("autoLogin", false);
                                 editor.apply();
-                                Toast.makeText(SettingActivity.this, "注销成功！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingActivity.this, R.string.success_register, Toast.LENGTH_SHORT).show();
                                 startActivity(intent);
                                 finish();
                             }

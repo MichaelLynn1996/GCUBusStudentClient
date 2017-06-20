@@ -35,16 +35,4 @@ public class Global {
         dialog.show();
     }
 
-    public static void makeDialog(Activity context, String title, String message, DialogInterface.OnClickListener onOK, DialogInterface.OnClickListener onCancel) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle(title);
-        dialog.setMessage(message);
-        dialog.setCancelable(false);
-        if (onOK != null)
-            dialog.setPositiveButton(R.string.ok, onOK);
-
-        if (onCancel != null)
-            dialog.setNegativeButton(R.string.cancel, onCancel);
-        dialog.show();
-    }
 }
