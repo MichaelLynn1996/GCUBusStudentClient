@@ -31,6 +31,8 @@
 
     <string name="setting">设置</string>
     <string name="exit_logoff">关于 &amp; 退出</string>
+    <string name="normal">常规</string>
+    <string name="logout1">注销</string>
 
     <!--  错误信息 -->
     <string name="wrong_unknown">未知错误</string>
